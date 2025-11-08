@@ -1,15 +1,15 @@
 {
-	"name": "obsidian-code-highlighter",
-	"version": "0.1.0",
-	"description": "A lightweight Obsidian plugin that highlights specific lines in code blocks",
+	"name": "obsidian-plugin",
+	"version": "1.0.0",
+	"description": "An Obsidian plugin",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": ["obsidian", "plugin", "code", "highlight", "syntax"],
-	"author": "sunlune",
+	"keywords": [],
+	"author": "",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",

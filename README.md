@@ -1,6 +1,6 @@
 # Code Highlighter Plugin for Obsidian
 
-A lightweight Obsidian plugin that highlights specific lines in code blocks. Supports Reading mode, Live Preview mode (coming soon), and Canvas.
+A lightweight Obsidian plugin that highlights specific lines in code blocks. Supports Reading mode, Live Preview mode, and Canvas.
 
 ## Features
 
@@ -108,25 +108,15 @@ You can customize the highlight color by adding CSS snippets to your vault:
 
 ## Roadmap
 
-- [x] Reading mode support
-- [x] Canvas support
+- [ ] Reading mode support
+- [ ] Canvas support
 - [x] Line number highlighting
 - [x] Range highlighting
-- [x] Regex matching
-- [x] Text matching
-- [ ] Full Live Preview mode support
+- [ ] Regex matching
+- [ ] Text matching
+- [x] Live Preview mode support
 - [ ] Settings panel for customization
 - [ ] Multiple highlight colors
-- [ ] Line number display (optional)
-
-## Version History
-
-### v0.1.0 (Initial Release)
-
-- Basic line highlighting in Reading mode
-- Canvas support
-- Support for line numbers, ranges, regex, and text matching
-- R Markdown style syntax support
 
 ## Credits
 
