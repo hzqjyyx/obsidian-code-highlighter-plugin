@@ -115,11 +115,15 @@ You can customize the highlight color by adding CSS snippets to your vault:
 - [x] Regex matching
 - [x] Text matching
 - [x] Live Preview mode support
-- [ ] Settings panel for customization
 - [ ] Multiple highlight colors
+- [ ] Settings panel for customization (mainly colors)
 
 ** Bugs **
-- [ ] Code blocks in Reading mode does not refresh when the code block highlights are changed
+- [x] Code blocks in Reading mode does not refresh when the code block highlights are changed
+- [ ] Canvas line-height is slightly incorrect
+- [ ] Do not consider wrapping when calculating lines
+- [ ] Should not draw multiple overlays for the range of lines (also should consider the wrapping which is turing from 1 line to multiple lines)
+- [ ] Add case insensitive mode for text matching
 
 ## Credits
 
