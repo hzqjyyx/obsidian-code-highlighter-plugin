@@ -1,4 +1,4 @@
-import { Plugin, MarkdownPostProcessorContext, editorLivePreviewField } from 'obsidian';
+import { Plugin, MarkdownPostProcessorContext, editorLivePreviewField, MarkdownRenderChild, Notice } from 'obsidian';
 import { EditorView, Decoration, DecorationSet, ViewPlugin, ViewUpdate } from '@codemirror/view';
 import { RangeSetBuilder, EditorState } from '@codemirror/state';
 
@@ -9,13 +9,13 @@ interface HighlightRule {
 }
 
 export default class CodeHighlighterPlugin extends Plugin {
-	async onload() {
-		// Register markdown post-processor for Reading mode
-		this.registerMarkdownPostProcessor(this.processCodeBlock.bind(this));
+    async onload() {
+        // Register markdown post-processor for Reading mode
+        this.registerMarkdownPostProcessor(this.processCodeBlock.bind(this));
 
-		// Register CodeMirror extension for Live Preview mode
-		this.registerEditorExtension(this.createLivePreviewExtension());
-	}
+        // Register CodeMirror extension for Live Preview mode
+        this.registerEditorExtension(this.createLivePreviewExtension());
+    }
 
 	/**
 	 * Parse highlight syntax from code fence info string
@@ -50,7 +50,7 @@ export default class CodeHighlighterPlugin extends Plugin {
 					console.warn('Invalid regex pattern:', trimmed);
 				}
 			}
-			// Text match: "text"
+			// Text match: "text" or 'text'
 			else if ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
 			         (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
 				const text = trimmed.slice(1, -1);
@@ -64,11 +64,12 @@ export default class CodeHighlighterPlugin extends Plugin {
 				}
 			}
 			// Single line number: 1
+			else if (!isNaN(parseInt(trimmed))) {
+				rules.push({ type: 'line', value: parseInt(trimmed) });
+			}
+			// Bare text: process
 			else {
-				const lineNum = parseInt(trimmed);
-				if (!isNaN(lineNum)) {
-					rules.push({ type: 'line', value: lineNum });
-				}
+				rules.push({ type: 'text', value: trimmed });
 			}
 		}
 
