@@ -153,7 +153,7 @@ export default class CodeHighlighterPlugin extends Plugin {
         const codeBlocks = el.querySelectorAll('pre > code');
 
         codeBlocks.forEach((codeEl) => {
-            const preEl = codeEl.parentElement;
+            const preEl = codeEl.parentElement as HTMLElement | null;
             if (!preEl) return;
 
             // Try to find the original info string
@@ -178,17 +178,45 @@ export default class CodeHighlighterPlugin extends Plugin {
             const codeLines = lines.slice(1, -1); // Remove first line (```...) and last line (```)
             if (codeLines.length === 0) return;
 
-            // Check if span elements have been added (syntax highlighting is complete)
-            const spans = codeEl.querySelectorAll('span');
+            // Manage lifecycle for this code block
+            const child = new (class extends MarkdownRenderChild {
+                overlays: HTMLElement[] = [];
+                observer?: MutationObserver;
+                timeoutId?: number;
+                clear() {
+                    this.overlays.forEach((e) => e.remove());
+                    this.overlays = [];
+                }
+                onunload(): void {
+                    this.clear();
+                    if (this.observer) {
+                        this.observer.disconnect();
+                        this.observer = undefined;
+                    }
+                    if (this.timeoutId) {
+                        window.clearTimeout(this.timeoutId);
+                        this.timeoutId = undefined;
+                    }
+                }
+            })(preEl);
 
-            if (spans.length > 0) {
-                const rootStyles = getComputedStyle(el);
-                const fontSize = parseFloat(rootStyles.getPropertyValue('--font-text-size'));
-                const lineHeightRatio = parseFloat(rootStyles.getPropertyValue('--line-height-normal'));
+            ctx.addChild(child);
+
+            const tryRender = (): boolean => {
+                // Check if syntax highlighting spans exist yet
+                const spans = codeEl.querySelectorAll('span');
+                if (spans.length === 0) return false;
+
+                // Ensure pre is positioned for absolute overlays
+                const preComputed = getComputedStyle(preEl);
+                if (preComputed.position === 'static') preEl.style.position = 'relative';
+
+                // Compute line height
+                const rootStyles = getComputedStyle(codeEl);
+                const fontSize = parseFloat(rootStyles.getPropertyValue('--font-text-size')) || parseFloat(rootStyles.fontSize) || 14;
+                const lineHeightRatio = parseFloat(rootStyles.getPropertyValue('--line-height-normal')) || (parseFloat(rootStyles.lineHeight) / fontSize) || 1.6;
                 const lineHeight = fontSize * lineHeightRatio;
-                console.log('debug', el, fontSize, lineHeightRatio, lineHeight);
 
-                // Get the first span to calculate line height adjustment and base offsetTop
                 const firstSpan = spans[0] as HTMLElement;
                 const rect = firstSpan.getBoundingClientRect();
                 const lineHeightAdjustment = (lineHeight - rect.height) / 2;
@@ -203,12 +231,14 @@ export default class CodeHighlighterPlugin extends Plugin {
                     }
                 });
 
+                // Clear any previous overlays before re-rendering
+                child.clear();
+
                 // Create overlay for each highlighted line
                 highlightedLines.forEach((lineNumber) => {
                     // Calculate position: (lineNumber - 1) * lineHeight + firstLineOffsetTop - lineHeightAdjustment
                     const top = (lineNumber - 1) * lineHeight + firstLineOffsetTop - lineHeightAdjustment;
-                    console.log('top', top, lineNumber, lineHeight, firstLineOffsetTop, lineHeightAdjustment);
-                    // const overlay = document.createElement('div');
+
                     const overlay = preEl.createEl('div');
                     overlay.addClass('code-highlighter-highlighted');
                     overlay.style.setProperty('position', 'absolute');
@@ -217,18 +247,34 @@ export default class CodeHighlighterPlugin extends Plugin {
                     overlay.style.setProperty('marginLeft', '0');
                     overlay.style.setProperty('width', '100%');
                     overlay.style.setProperty('height', `${lineHeightRatio}em`);
+                    // overlay.style.setProperty('pointer-events', 'none');
+
+                    child.overlays.push(overlay);
                 });
 
-            }
-            // });
+                return true;
+            };
 
-            // // Start observing
-            // observer.observe(codeEl, {
-            //     childList: true,      // Listen for child element changes
-            //     subtree: true,        // Listen to all descendant elements
-            //     attributes: false,
-            //     characterData: false
-            // });
+            // Try to render after layout settles (double rAF)
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (tryRender()) return;
+
+                    // Fallback: watch briefly for syntax highlighting completion
+                    child.observer = new MutationObserver(() => {
+                        if (tryRender()) {
+                            child.observer?.disconnect();
+                            child.observer = undefined;
+                        }
+                    });
+                    child.observer.observe(codeEl, { childList: true, subtree: true });
+                    // Safety timeout to avoid leaks
+                    child.timeoutId = window.setTimeout(() => {
+                        child.observer?.disconnect();
+                        child.observer = undefined;
+                    }, 1500);
+                });
+            });
 
         });
     }
