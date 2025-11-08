@@ -1,0 +1,12 @@
+/* 
+Styles for your plugin 
+Classes prefixed with your plugin name to avoid conflicts
+*/
+
+.my-plugin-container {
+	padding: 10px;
+}
+
+.my-plugin-button {
+	margin: 5px;
+}

@@ -1,11 +1,10 @@
 {
-	"id": "code-highlighter-plugin",
-	"name": "Code Highlighter Plugin",
-	"version": "1.0.0",
-	"minAppVersion": "0.15.0",
-	"description": "Highlight code in the edit view, read view and canvas view",
-	"author": "Code Highlighter Team",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"id": "code-highlighter",
+	"name": "Code Highlighter",
+	"version": "0.1.0",
+	"minAppVersion": "1.6.0",
+	"description": "Lightweight plugin to highlight specific lines in code blocks. Supports line numbers, ranges, regex, and text matching in Reading mode, Live Preview, and Canvas.",
+	"author": "Zach",
+	"authorUrl": "",
 	"isDesktopOnly": false
 }

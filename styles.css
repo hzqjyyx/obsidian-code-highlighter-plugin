@@ -1,8 +1,53 @@
-/*
+/* Code Highlighter Plugin Styles */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+/* Highlighted line styling */
+.code-highlighter-highlighted {
+	background-color: rgba(255, 212, 59, 0.15);
+	border-left: 3px solid rgba(255, 212, 59, 0.8);
+	padding-left: 0.5em;
+	margin-left: -0.5em;
+	display: block;
+	transition: background-color 0.2s ease;
+}
 
-If your plugin does not need CSS, delete this file.
+/* Dark theme adjustments */
+.theme-dark .code-highlighter-highlighted {
+	background-color: rgba(255, 212, 59, 0.12);
+	border-left-color: rgba(255, 212, 59, 0.6);
+}
 
-*/
+/* Light theme adjustments */
+.theme-light .code-highlighter-highlighted {
+	background-color: rgba(255, 212, 59, 0.18);
+	border-left-color: rgba(255, 212, 59, 0.9);
+}
+
+/* Hover effect for better visibility */
+.code-highlighter-highlighted:hover {
+	background-color: rgba(255, 212, 59, 0.25);
+}
+
+.theme-dark .code-highlighter-highlighted:hover {
+	background-color: rgba(255, 212, 59, 0.18);
+}
+
+/* Ensure proper spacing in code blocks */
+pre code .code-highlighter-highlighted {
+	line-height: inherit;
+}
+
+/* Live Preview mode specific styling */
+.cm-line.code-highlighter-highlighted {
+	background-color: rgba(255, 212, 59, 0.2) !important;
+	box-shadow: inset 3px 0 0 0 rgba(255, 212, 59, 0.8) !important;
+}
+
+.theme-dark .cm-line.code-highlighter-highlighted {
+	background-color: rgba(255, 212, 59, 0.15) !important;
+	box-shadow: inset 3px 0 0 0 rgba(255, 212, 59, 0.6) !important;
+}
+
+.theme-light .cm-line.code-highlighter-highlighted {
+	background-color: rgba(255, 212, 59, 0.25) !important;
+	box-shadow: inset 3px 0 0 0 rgba(255, 212, 59, 0.9) !important;
+}
